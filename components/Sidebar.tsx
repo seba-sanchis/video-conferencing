@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
-import { sidebarLinks } from "@/constants";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
+import { sidebarLinks } from "@/constants";
 
 export default function Sidebar() {
   const pathname = usePathname();

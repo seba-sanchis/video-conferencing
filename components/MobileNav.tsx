@@ -4,17 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { sidebarLinks } from "@/constants";
 import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { sidebarLinks } from "@/constants";
 
 export default function MobileNav() {
   const pathname = usePathname();
