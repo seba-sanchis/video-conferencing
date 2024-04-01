@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import useGetCalls from "@/hooks/useGetCalls";
 import { Call, CallRecording } from "@stream-io/video-react-sdk";
 import MeetingCard from "./MeetingCard";
 import Loader from "./Loader";
+import { useToast } from "./ui/use-toast";
 
 type Props = {
   type: "ended" | "upcoming" | "recordings";
@@ -18,6 +19,8 @@ export default function CallList({ type }: Props) {
     useGetCalls();
 
   const [recordings, setRecordings] = useState<CallRecording[]>([]);
+
+  const { toast } = useToast();
 
   function getCalls() {
     switch (type) {
@@ -44,6 +47,29 @@ export default function CallList({ type }: Props) {
         return "";
     }
   }
+
+  useEffect(() => {
+    async function fetchRecordings() {
+      try {
+        const callData = await Promise.all(
+          callRecordings.map((meeting) => meeting.queryRecordings())
+        );
+
+        const recordings = callData
+          .filter((call) => call.recordings.length > 0)
+          .flatMap((call) => call.recordings);
+
+        setRecordings(recordings);
+      } catch (error) {
+        toast({
+          title: "Uh-oh!",
+          description: "Try again later.",
+        });
+      }
+    }
+
+    if (type === "recordings") fetchRecordings();
+  }, [type, callRecordings]);
 
   const calls = getCalls();
   const noCallsMessage = getNoCallsMessage();
@@ -72,11 +98,12 @@ export default function CallList({ type }: Props) {
                 : "/icons/recordings/svg"
             }
             title={
-              (meeting as Call).state.custom.description.substring(0, 26) ||
+              (meeting as Call).state?.custom.description.substring(0, 26) ||
+              (meeting as CallRecording).filename.substring(0, 20) ||
               "No description"
             }
             date={
-              (meeting as Call).state.startsAt?.toLocaleString() ||
+              (meeting as Call).state?.startsAt?.toLocaleString() ||
               (meeting as CallRecording).start_time.toLocaleString()
             }
             isPreviousMeeting={type === "ended"}
