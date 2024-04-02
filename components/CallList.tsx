@@ -98,9 +98,9 @@ export default function CallList({ type }: Props) {
                 : "/icons/recordings/svg"
             }
             title={
-              (meeting as Call).state?.custom.description.substring(0, 26) ||
-              (meeting as CallRecording).filename.substring(0, 20) ||
-              "No description"
+              (meeting as Call).state?.custom?.description?.substring(0, 26) ||
+              (meeting as CallRecording)?.filename?.substring(0, 20) ||
+              "Personal meeting"
             }
             date={
               (meeting as Call).state?.startsAt?.toLocaleString() ||
